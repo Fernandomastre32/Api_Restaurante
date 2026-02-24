@@ -78,5 +78,7 @@ app.get('/api/health', (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`🚀 Servidor Tico corriendo en http://localhost:${port}`);
+    console.log(`📖 Documentación disponible en http://localhost:${port}/api-docs`);
 });
+
