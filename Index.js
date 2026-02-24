@@ -2,8 +2,33 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Swagger Options
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Restaurante API',
+            version: '1.0.0',
+            description: 'API de administración para Microservicios de Restaurante',
+        },
+        servers: [
+            {
+                url: `http://localhost:${port}`,
+                description: 'Servidor Local'
+            }
+        ]
+    },
+    apis: ['./Routes/*.js'] // Ruta donde Swagger mirará nuestros comentarios
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Middlewares
 app.use(cors());
