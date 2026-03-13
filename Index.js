@@ -22,7 +22,20 @@ const swaggerOptions = {
                 url: `http://localhost:${port}`,
                 description: 'Servidor Local'
             }
-        ]
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description: 'Introduce tu token JWT aquí para acceder a los endpoints protegidos'
+                }
+            }
+        },
+        security: [{
+            bearerAuth: []
+        }]
     },
     apis: ['./Routes/*.js'] // Ruta donde Swagger mirará nuestros comentarios
 };
@@ -35,6 +48,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+const authRoutes = require('./Routes/authRoutes');
 const rolRoutes = require('./Routes/rolRoutes');
 const empleadoRoutes = require('./Routes/empleadoRoutes');
 const clienteRoutes = require('./Routes/clienteRoutes');
@@ -54,6 +68,7 @@ const pagoRoutes = require('./Routes/pagoRoutes');
 const ordenRoutes = require('./Routes/ordenRoutes');
 const compraRoutes = require('./Routes/compraRoutes');
 
+app.use('/api/auth', authRoutes);
 app.use('/api/roles', rolRoutes);
 app.use('/api/empleados', empleadoRoutes);
 app.use('/api/clientes', clienteRoutes);
@@ -78,7 +93,7 @@ app.get('/api/health', (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-    console.log(`🚀 Servidor Tico corriendo en http://localhost:${port}`);
-    console.log(`📖 Documentación disponible en http://localhost:${port}/api-docs`);
+    console.log(`Servidor Restaurante corriendo en http://localhost:${port}`);
+    console.log(`Documentación disponible en http://localhost:${port}/api-docs`);
 });
 

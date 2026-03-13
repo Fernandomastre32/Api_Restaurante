@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mesaController = require('../Controller/mesaController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,12 +16,16 @@ const mesaController = require('../Controller/mesaController');
  *   get:
  *     summary: Obtener todas las mesas
  *     tags: [Mesas]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista devuelta
  *   post:
- *     summary: Crear nueva mesa
+ *     summary: Crear nueva mesa (Solo GERENTE)
  *     tags: [Mesas]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -42,8 +47,8 @@ const mesaController = require('../Controller/mesaController');
  *       201:
  *         description: Mesa creada
  */
-router.get('/', mesaController.getAllMesas);
-router.post('/', mesaController.createMesa);
+router.get('/', verifyToken, checkRole(['MESERO']), mesaController.getAllMesas);
+router.post('/', verifyToken, checkRole([]), mesaController.createMesa);
 
 /**
  * @swagger
@@ -51,6 +56,8 @@ router.post('/', mesaController.createMesa);
  *   get:
  *     summary: Obtener mesa por ID
  *     tags: [Mesas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -65,6 +72,8 @@ router.post('/', mesaController.createMesa);
  *   put:
  *     summary: Modificar mesa
  *     tags: [Mesas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -92,8 +101,10 @@ router.post('/', mesaController.createMesa);
  *       404:
  *         description: Mesa no encontrada
  *   delete:
- *     summary: Eliminar mesa
+ *     summary: Eliminar mesa (Solo GERENTE)
  *     tags: [Mesas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -104,8 +115,8 @@ router.post('/', mesaController.createMesa);
  *       200:
  *         description: Mesa borrada
  */
-router.get('/:id', mesaController.getMesaById);
-router.put('/:id', mesaController.updateMesa);
-router.delete('/:id', mesaController.deleteMesa);
+router.get('/:id', verifyToken, checkRole(['MESERO']), mesaController.getMesaById);
+router.put('/:id', verifyToken, checkRole(['MESERO']), mesaController.updateMesa); // Mesero puede cambiar estado
+router.delete('/:id', verifyToken, checkRole([]), mesaController.deleteMesa); // Solo Gerente
 
 module.exports = router;

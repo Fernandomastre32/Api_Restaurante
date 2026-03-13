@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ordenController = require('../Controller/ordenController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,12 +16,16 @@ const ordenController = require('../Controller/ordenController');
  *   get:
  *     summary: Obtener todas las ordenes
  *     tags: [Ordenes]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista devuelta
  *   post:
  *     summary: Registrar una nueva Orden junto con sus Detalles
  *     tags: [Ordenes]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -55,8 +60,8 @@ const ordenController = require('../Controller/ordenController');
  *       400:
  *         description: Faltan detalles de platillos
  */
-router.get('/', ordenController.getAllOrdenes);
-router.post('/', ordenController.createOrdenConDetalle);
+router.get('/', verifyToken, checkRole(['MESERO', 'COCINA', 'CAJERO']), ordenController.getAllOrdenes);
+router.post('/', verifyToken, checkRole(['MESERO']), ordenController.createOrdenConDetalle);
 
 /**
  * @swagger
@@ -64,6 +69,8 @@ router.post('/', ordenController.createOrdenConDetalle);
  *   get:
  *     summary: Obtener orden por ID (incluye su detalle de platillos)
  *     tags: [Ordenes]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -74,6 +81,9 @@ router.post('/', ordenController.createOrdenConDetalle);
  *       200:
  *         description: Datos devueltos
  */
-router.get('/:id', ordenController.getOrdenById);
+router.get('/:id', verifyToken, checkRole(['MESERO', 'COCINA', 'CAJERO']), ordenController.getOrdenById);
+
+// Si hubiera un PUT para actualizar estado en este controlador, sería:
+// router.put('/:id/estado', verifyToken, checkRole(['MESERO', 'COCINA']), ordenController.updateOrdenEstado);
 
 module.exports = router;

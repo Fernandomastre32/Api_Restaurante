@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const recetaController = require('../Controller/recetaIngredienteController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,6 +16,8 @@ const recetaController = require('../Controller/recetaIngredienteController');
  *   get:
  *     summary: Obtener ingredientes de un platillo específico
  *     tags: [Recetas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: platilloId
@@ -25,7 +28,7 @@ const recetaController = require('../Controller/recetaIngredienteController');
  *       200:
  *         description: Lista de ingredientes devuelta
  */
-router.get('/platillo/:platilloId', recetaController.getIngredientesByPlatillo);
+router.get('/platillo/:platilloId', verifyToken, checkRole(['COCINA']), recetaController.getIngredientesByPlatillo);
 
 /**
  * @swagger
@@ -33,6 +36,8 @@ router.get('/platillo/:platilloId', recetaController.getIngredientesByPlatillo);
  *   post:
  *     summary: Agregar ingrediente a platillo
  *     tags: [Recetas]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -51,7 +56,7 @@ router.get('/platillo/:platilloId', recetaController.getIngredientesByPlatillo);
  *       201:
  *         description: Ingrediente agregado
  */
-router.post('/', recetaController.addIngredienteToReceta);
+router.post('/', verifyToken, checkRole([]), recetaController.addIngredienteToReceta);
 
 /**
  * @swagger
@@ -59,6 +64,8 @@ router.post('/', recetaController.addIngredienteToReceta);
  *   delete:
  *     summary: Quitar ingrediente de receta (usando su receta_id)
  *     tags: [Recetas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -69,6 +76,6 @@ router.post('/', recetaController.addIngredienteToReceta);
  *       200:
  *         description: Ingrediente borrado de la receta
  */
-router.delete('/:id', recetaController.removeIngredienteFromReceta);
+router.delete('/:id', verifyToken, checkRole([]), recetaController.removeIngredienteFromReceta);
 
 module.exports = router;

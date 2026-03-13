@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const insumoController = require('../Controller/insumoController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,12 +16,16 @@ const insumoController = require('../Controller/insumoController');
  *   get:
  *     summary: Obtener todos los insumos
  *     tags: [Insumos]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista devuelta
  *   post:
  *     summary: Crear nuevo insumo
  *     tags: [Insumos]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -45,8 +50,8 @@ const insumoController = require('../Controller/insumoController');
  *       201:
  *         description: Insumo creado
  */
-router.get('/', insumoController.getAllInsumos);
-router.post('/', insumoController.createInsumo);
+router.get('/', verifyToken, checkRole(['COCINA']), insumoController.getAllInsumos);
+router.post('/', verifyToken, checkRole([]), insumoController.createInsumo);
 
 /**
  * @swagger
@@ -54,6 +59,8 @@ router.post('/', insumoController.createInsumo);
  *   get:
  *     summary: Obtener insumo por ID
  *     tags: [Insumos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -68,6 +75,8 @@ router.post('/', insumoController.createInsumo);
  *   put:
  *     summary: Modificar insumo
  *     tags: [Insumos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -101,6 +110,8 @@ router.post('/', insumoController.createInsumo);
  *   delete:
  *     summary: Eliminar insumo
  *     tags: [Insumos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -111,8 +122,8 @@ router.post('/', insumoController.createInsumo);
  *       200:
  *         description: Insumo borrado
  */
-router.get('/:id', insumoController.getInsumoById);
-router.put('/:id', insumoController.updateInsumo);
-router.delete('/:id', insumoController.deleteInsumo);
+router.get('/:id', verifyToken, checkRole(['COCINA']), insumoController.getInsumoById);
+router.put('/:id', verifyToken, checkRole([]), insumoController.updateInsumo);
+router.delete('/:id', verifyToken, checkRole([]), insumoController.deleteInsumo);
 
 module.exports = router;

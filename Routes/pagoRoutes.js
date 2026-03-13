@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pagoController = require('../Controller/pagoController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,12 +16,16 @@ const pagoController = require('../Controller/pagoController');
  *   get:
  *     summary: Obtener historial de todos los pagos
  *     tags: [Pagos]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista devuelta
  *   post:
  *     summary: Registrar nuevo pago (cierra la orden)
  *     tags: [Pagos]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -42,8 +47,8 @@ const pagoController = require('../Controller/pagoController');
  *       400:
  *         description: Validacion fallida
  */
-router.get('/', pagoController.getAllPagos);
-router.post('/', pagoController.createPago);
+router.get('/', verifyToken, checkRole(['CAJERO']), pagoController.getAllPagos);
+router.post('/', verifyToken, checkRole(['CAJERO']), pagoController.createPago);
 
 /**
  * @swagger
@@ -51,6 +56,8 @@ router.post('/', pagoController.createPago);
  *   get:
  *     summary: Obtener pago por ID
  *     tags: [Pagos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -61,6 +68,6 @@ router.post('/', pagoController.createPago);
  *       200:
  *         description: Datos devueltos
  */
-router.get('/:id', pagoController.getPagoById);
+router.get('/:id', verifyToken, checkRole(['CAJERO']), pagoController.getPagoById);
 
 module.exports = router;

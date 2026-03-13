@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const compraController = require('../Controller/compraController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,12 +16,16 @@ const compraController = require('../Controller/compraController');
  *   get:
  *     summary: Obtener todas las compras
  *     tags: [Compras]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista devuelta
  *   post:
  *     summary: Registrar una nueva Compra junto con sus insumos
  *     tags: [Compras]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -54,8 +59,8 @@ const compraController = require('../Controller/compraController');
  *       400:
  *         description: Faltan detalles
  */
-router.get('/', compraController.getAllCompras);
-router.post('/', compraController.createCompraConDetalle);
+router.get('/', verifyToken, checkRole(['CAJERO']), compraController.getAllCompras);
+router.post('/', verifyToken, checkRole(['CAJERO']), compraController.createCompraConDetalle);
 
 /**
  * @swagger
@@ -63,6 +68,8 @@ router.post('/', compraController.createCompraConDetalle);
  *   get:
  *     summary: Obtener Compra por ID (incluye sus insumos)
  *     tags: [Compras]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -73,6 +80,6 @@ router.post('/', compraController.createCompraConDetalle);
  *       200:
  *         description: Datos devueltos
  */
-router.get('/:id', compraController.getCompraById);
+router.get('/:id', verifyToken, checkRole(['CAJERO']), compraController.getCompraById);
 
 module.exports = router;

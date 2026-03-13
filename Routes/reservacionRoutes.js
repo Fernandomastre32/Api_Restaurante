@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const reservacionController = require('../Controller/reservacionController');
+const { verifyToken, checkRole } = require('../Middlewares/authMiddleware');
 
 /**
  * @swagger
@@ -15,12 +16,16 @@ const reservacionController = require('../Controller/reservacionController');
  *   get:
  *     summary: Obtener todas las reservaciones
  *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista devuelta
  *   post:
  *     summary: Crear nueva reservacion
  *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -45,8 +50,8 @@ const reservacionController = require('../Controller/reservacionController');
  *       201:
  *         description: Reservacion creada
  */
-router.get('/', reservacionController.getAllReservaciones);
-router.post('/', reservacionController.createReservacion);
+router.get('/', verifyToken, checkRole(['RECEPCIONISTA']), reservacionController.getAllReservaciones);
+router.post('/', verifyToken, checkRole(['RECEPCIONISTA']), reservacionController.createReservacion);
 
 /**
  * @swagger
@@ -54,6 +59,8 @@ router.post('/', reservacionController.createReservacion);
  *   get:
  *     summary: Obtener reservacion por ID
  *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -68,6 +75,8 @@ router.post('/', reservacionController.createReservacion);
  *   put:
  *     summary: Modificar reservacion
  *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -100,6 +109,8 @@ router.post('/', reservacionController.createReservacion);
  *   delete:
  *     summary: Eliminar reservacion
  *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -110,8 +121,8 @@ router.post('/', reservacionController.createReservacion);
  *       200:
  *         description: Reservacion borrada
  */
-router.get('/:id', reservacionController.getReservacionById);
-router.put('/:id', reservacionController.updateReservacion);
-router.delete('/:id', reservacionController.deleteReservacion);
+router.get('/:id', verifyToken, checkRole(['RECEPCIONISTA']), reservacionController.getReservacionById);
+router.put('/:id', verifyToken, checkRole(['RECEPCIONISTA']), reservacionController.updateReservacion);
+router.delete('/:id', verifyToken, checkRole([]), reservacionController.deleteReservacion);
 
 module.exports = router;
